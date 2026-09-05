@@ -48,6 +48,7 @@ function getMetadata() {
   return {
     id, sport, year, name, brand, set, cardNumber: number, team, category,
     image: `${folder}/${slug(name || "card")}${number ? `-${slug(number)}` : ""}.png`,
+    cardDimensions: { inches: "2.5x3.5", aspectRatio: "5:7", pixels: "750x1050" },
     createdAt: new Date().toISOString(), schemaVersion: 1
   };
 }
@@ -56,42 +57,28 @@ function drawCard() {
   const W = canvas.width, H = canvas.height;
   ctx.clearRect(0, 0, W, H);
 
-  const g = ctx.createLinearGradient(0, 0, W, H);
-  g.addColorStop(0, "#151820"); g.addColorStop(.55, "#090b10"); g.addColorStop(1, "#1a1308");
-  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  // The canvas itself is the finished trading card: 750×1050 px = 5:7,
+  // matching the standard 2.5×3.5 inch trading-card proportions.
+  ctx.fillStyle = "#20242d";
+  ctx.fillRect(0, 0, W, H);
 
-  const art = { x: 34, y: 34, w: W - 68, h: H - 230 };
-  ctx.save();
-  ctx.beginPath(); ctx.roundRect(art.x, art.y, art.w, art.h, 24); ctx.clip();
-  ctx.fillStyle = "#20242d"; ctx.fillRect(art.x, art.y, art.w, art.h);
   if (state.image) {
     const img = state.image;
-    const cover = Math.max(art.w / img.width, art.h / img.height);
+    const cover = Math.max(W / img.width, H / img.height);
     const dw = img.width * cover * state.scale;
     const dh = img.height * cover * state.scale;
-    ctx.translate(art.x + art.w / 2 + state.x, art.y + art.h / 2 + state.y);
+
+    ctx.save();
+    ctx.translate(W / 2 + state.x, H / 2 + state.y);
     ctx.rotate(state.rotation);
     ctx.drawImage(img, -dw / 2, -dh / 2, dw, dh);
+    ctx.restore();
   } else {
-    ctx.fillStyle = "#7d8490"; ctx.textAlign = "center"; ctx.font = "700 30px -apple-system, sans-serif";
-    ctx.fillText("UPLOAD SCREENSHOT", art.x + art.w / 2, art.y + art.h / 2);
+    ctx.fillStyle = "#7d8490";
+    ctx.textAlign = "center";
+    ctx.font = "700 30px -apple-system, sans-serif";
+    ctx.fillText("CHOOSE CARD FROM PHOTOS", W / 2, H / 2);
   }
-  ctx.restore();
-
-  ctx.strokeStyle = "#f4cb53"; ctx.lineWidth = 8; ctx.strokeRect(14, 14, W - 28, H - 28);
-  ctx.strokeStyle = "#6f5b22"; ctx.lineWidth = 2; ctx.strokeRect(28, 28, W - 56, H - 56);
-
-  const plaqueY = H - 186;
-  const pg = ctx.createLinearGradient(0, plaqueY, W, H);
-  pg.addColorStop(0, "rgba(8,9,12,.97)"); pg.addColorStop(1, "rgba(24,20,10,.98)");
-  ctx.fillStyle = pg; ctx.fillRect(28, plaqueY, W - 56, 150);
-  ctx.fillStyle = "#f7f8fa"; ctx.textAlign = "left";
-  const name = inputs.name.value.trim() || "PLAYER NAME";
-  ctx.font = "900 44px -apple-system, sans-serif"; ctx.fillText(name.toUpperCase(), 54, plaqueY + 54, W - 108);
-  const details = [inputs.year.value.trim(), inputs.brand.value.trim() || inputs.set.value.trim(), inputs.number.value.trim() ? `#${inputs.number.value.trim()}` : ""].filter(Boolean).join(" • ");
-  ctx.fillStyle = "#c2c6cf"; ctx.font = "700 22px -apple-system, sans-serif"; ctx.fillText(details || "CARD DETAILS", 54, plaqueY + 91, W - 108);
-  const sub = [inputs.team.value.trim(), inputs.category.value.trim()].filter(Boolean).join(" • ");
-  ctx.fillStyle = "#f4cb53"; ctx.font = "800 18px -apple-system, sans-serif"; ctx.fillText(sub || inputs.sport.value, 54, plaqueY + 122, W - 108);
 }
 
 Object.values(inputs).forEach(input => input.addEventListener("input", drawCard));
@@ -208,7 +195,7 @@ $("cardForm").addEventListener("submit", async e => {
     return;
   }
   if (!state.image) {
-    $("publishMessage").textContent = "Upload a screenshot first.";
+    $("publishMessage").textContent = "Choose a card image from Photos first.";
     return;
   }
 
