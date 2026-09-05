@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a0a0d" />
+  <title>Trading Card Collector — Card Studio</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <div class="eyebrow">TRADING CARD COLLECTOR</div>
+      <h1>Card Studio</h1>
+    </div>
+    <button id="addCardBtn" class="icon-btn" aria-label="Add card">＋</button>
+  </header>
+
+  <main>
+    <section id="libraryView" class="view active">
+      <div class="hero-row">
+        <div>
+          <h2>Master Catalogue</h2>
+          <p>Create cards on your phone, then export them into the game catalogue.</p>
+        </div>
+        <button id="heroAddBtn" class="primary">+ ADD CARD</button>
+      </div>
+      <div id="catalogueStats" class="stats"></div>
+      <div id="cardGrid" class="card-grid"></div>
+      <div id="emptyState" class="empty-state">
+        <div class="empty-plus">＋</div>
+        <h3>No cards yet</h3>
+        <p>Your first exported card will appear here.</p>
+        <button id="emptyAddBtn" class="primary">CREATE FIRST CARD</button>
+      </div>
+    </section>
+
+    <section id="editorView" class="view editor-view">
+      <div class="editor-head">
+        <button id="backBtn" class="ghost">‹ Catalogue</button>
+        <div class="step-pill">NEW CARD</div>
+      </div>
+
+      <div class="editor-layout">
+        <div class="card-stage-wrap">
+          <div id="cardStage" class="card-stage" aria-label="Card preview">
+            <canvas id="cardCanvas" width="750" height="1050"></canvas>
+            <div id="imageGestureLayer" class="gesture-layer"></div>
+          </div>
+          <div class="gesture-help">Drag to position • pinch to zoom</div>
+          <label class="upload-btn">
+            <input id="imageInput" type="file" accept="image/*" capture="environment" />
+            <span>UPLOAD SCREENSHOT</span>
+          </label>
+        </div>
+
+        <form id="cardForm" class="editor-panel" autocomplete="off">
+          <div class="field-group two-col">
+            <label>Sport
+              <select id="sportInput">
+                <option value="NBA">NBA</option>
+              </select>
+            </label>
+            <label>Year
+              <input id="yearInput" placeholder="1986-87" />
+            </label>
+          </div>
+
+          <label>Player / Card Name
+            <input id="nameInput" placeholder="Michael Jordan" required />
+          </label>
+
+          <div class="field-group two-col">
+            <label>Brand
+              <input id="brandInput" placeholder="Fleer" />
+            </label>
+            <label>Set
+              <input id="setInput" placeholder="Fleer Basketball" />
+            </label>
+          </div>
+
+          <div class="field-group two-col">
+            <label>Card #
+              <input id="numberInput" placeholder="57" />
+            </label>
+            <label>Team
+              <input id="teamInput" placeholder="Chicago Bulls" />
+            </label>
+          </div>
+
+          <label>Category
+            <input id="categoryInput" placeholder="Rookie Card" />
+          </label>
+
+          <div class="adjust-row">
+            <button type="button" id="fitBtn" class="ghost">FIT IMAGE</button>
+            <button type="button" id="resetBtn" class="ghost">RESET POSITION</button>
+          </div>
+
+          <div class="export-box">
+            <div>
+              <strong>Export target</strong>
+              <span id="publishTarget">Master catalogue → main</span>
+            </div>
+            <button type="submit" id="exportBtn" class="primary export">EXPORT TO GAME</button>
+          </div>
+
+          <div id="publishMessage" class="publish-message" role="status"></div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <script src="publisher.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
